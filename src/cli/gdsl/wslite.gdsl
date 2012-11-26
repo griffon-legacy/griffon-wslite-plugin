@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package griffon.plugins.wslite;
-
-import griffon.util.CallableWithArgs;
-import groovy.lang.Closure;
-
-import java.util.Map;
+package gdsl
 
 /**
  * @author Andres Almiray
  */
-public interface WsliteProvider {
-    Object withSoap(Map params, Closure closure);
 
-    Object withHttp(Map params, Closure closure);
-
-    Object withRest(Map params, Closure closure);
-
-    <T> T withSoap(Map params, CallableWithArgs<T> callable);
-
-    <T> T withHttp(Map params, CallableWithArgs<T> callable);
-
-    <T> T withRest(Map params, CallableWithArgs<T> callable);
+contributor(scope: annotatedScope(ctype: 'griffon.plugins.wslite.WsliteAware')) {
+    delegatesTo(findClass('griffon.plugins.wslite.WsliteContributionHandler'))
 }
+

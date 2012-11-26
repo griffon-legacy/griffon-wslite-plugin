@@ -16,6 +16,7 @@
 
 import griffon.core.GriffonClass
 import griffon.plugins.wslite.WsliteEnhancer
+import griffon.plugins.wslite.WsliteContributionHandler
 
 /**
  * @author Andres Almiray
@@ -25,6 +26,7 @@ class WsliteGriffonAddon {
         def types = app.config.griffon?.wslite?.injectInto ?: ['controller']
         for(String type : types) {
             for(GriffonClass gc : app.artifactManager.getClassesOfType(type)) {
+                if (WsliteContributionHandler.isAssignableFrom(gc.clazz)) continue
                 WsliteEnhancer.enhance(gc.metaClass)
             }
         }

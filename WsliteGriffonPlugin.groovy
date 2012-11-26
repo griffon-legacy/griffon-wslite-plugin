@@ -19,11 +19,11 @@
  */
 class WsliteGriffonPlugin {
     // the plugin version
-    String version = '0.1'
+    String version = '1.0.0'
     // the version or versions of Griffon the plugin is designed for
-    String griffonVersion = '0.9.5 > *'
+    String griffonVersion = '1.2.0 > *'
     // the other plugins this plugin depends on
-    Map dependsOn = [:]
+    Map dependsOn = [lombok: '0.4']
     // resources that are included in plugin packaging
     List pluginIncludes = []
     // the plugin license
@@ -58,7 +58,10 @@ The plugin will inject the following dynamic methods:
 
  * `withRest(Map params, Closure stmts)` - executes stmts using a RESTClient
  * `withHttp(Map params, Closure stmts)` - executes stmts using an HTTPClient
- * `withSoap(Map params, Closure stmts)` - executes stmts using a SOPAClient
+ * `withSoap(Map params, Closure stmts)` - executes stmts using a SOAPClient
+ * `withRest(Map params, CallableWithArgs stmts)` - executes stmts using a RESTClient
+ * `withHttp(Map params, CallableWithArgs stmts)` - executes stmts using an HTTPClient
+ * `withSoap(Map params, CallableWithArgs stmts)` - executes stmts using a SOAPClient
 
 The following properties will be set on the implicit HTTPClient when using either `withRest` or `withSoap`:
 
@@ -84,12 +87,20 @@ You can inject these methods to non-artifacts via metaclasses. Simply grab hold 
 Configuration
 -------------
 
-### Dynamic method injection
+### WsliteAware AST Transformation
+
+The preferred way to mark a class for method injection is by annotating it with `@griffon.plugins.wslite.WsliteAware`.
+This transformation injects the `griffon.plugins.wslite.WsliteContributionHandler` interface and default behavior that
+fulfills the contract.
+
+### Dynamic Method Injection
 
 Dynamic methods will be added to controllers by default. You can
 change this setting by adding a configuration flag in `griffon-app/conf/Config.groovy`
 
     griffon.wslite.injectInto = ['controller', 'service']
+
+Dynamic method injection wil skipped for classes implementing `griffon.plugins.wslite.WsliteContributionHandler`.
 
 ### Example
 
@@ -119,13 +130,13 @@ This example relies on [Grails][2] as the service provider. Follow these steps t
 5. Run the application
 
         grails run-app
-    
+
 Now we're ready to build the Griffon application
 
 1. Create a new Griffon application. We'll pick `calculator` as the application name
 
         griffon create-app calculator
-    
+
 2. Install the wslite plugin
 
         griffon install-plugin wslite
@@ -227,9 +238,83 @@ This implementation may be used in the following way
         }
     }
 
+On the other hand, if the service is annotated with `@griffon.plugins.wslite.WsliteAware` then usage of `WsliteEnhancer` should be
+avoided at all costs. Simply set `wsliteProviderInstance` on the service instance directly, like so, first the service definition
+
+    @griffon.plugins.wslite.WsliteAware
+    class MyService {
+        def serviceMethod() { ... }
+    }
+
+Next is the test
+
+    class MyServiceTests extends GriffonUnitTestCase {
+        void testSmokeAndMirrors() {
+            MyService service = new MyService()
+            service.wsliteProvider = new MyWsliteProvider()
+            // exercise service methods
+        }
+    }
+
+Tool Support
+------------
+
+### DSL Descriptors
+
+This plugin provides DSL descriptors for Intellij IDEA and Eclipse (provided you have the Groovy Eclipse plugin installed).
+These descriptors are found inside the `griffon-wslite-compile-x.y.z.jar`, with locations
+
+ * dsdl/wslite.dsld
+ * gdsl/wslite.gdsl
+
+### Lombok Support
+
+Rewriting Java AST in a similar fashion to Groovy AST transformations is posisble thanks to the [lombok][4] plugin.
+
+#### JavaC
+
+Support for this compiler is provided out-of-the-box by the command line tools. There's no additional configuration required.
+
+#### Eclipse
+
+Follow these steps to setup Lombok in Eclipse
+
+ 1. Make sure the project has the required files to be opened as an Eclipse Project. Simply call the following command
+
+         griffon integrate-with --eclipse
+
+ 2. Install the [eclipse-support][5] plugin and update the `.classpath` file
+
+         griffon install-plugin eclipse-support
+         griffon eclipse-update
+
+ 3. Open the project in Eclipse
+ 4. Locate the `lombok-x.y.z.jar` in the project libraries. Right click on it, run it as a Java application. Select `lombok.core.Main` as the class to launch. Follow the instructions on the screen. Make a not of the install path as you'll need it in the next step. Shutdown Eclipse.
+ 5. Go to the path where the lombok.jar was copied. Copy the following file from the project's working directory
+
+         $ cp $USER_HOME/.griffon/<version>/projects/<project>/plugins/wslite-<version>/dist/griffon-wslite-compile-<version>.jar .
+
+ 6. Edit the launch script for Eclipse and tweak the boothclasspath entry so that includes the file you just copied
+
+         -Xbootclasspath/a:lombok.jar::griffon-wslite-compile-<version>.jar
+
+ 7. Launch Eclipse once more. Eclipse should be able to provide content assist for Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
+
+#### NetBeans
+
+Follow the instructions found in [Annotation Processors Support in the NetBeans IDE, Part I: Using Project Lombok][6]. You may need to specify `lombok.core.AnnotationProcessor` in the list of Annotation Processors.
+
+NetBeans should be able to provide code suggestions on Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
+
+#### Intellij IDEA
+
+ Lombok support is forthcoming.
 
 [1]: https://github.com/jwagenleitner/groovy-wslite
 [2]: http://grails.org
 [3]: http://grails.org/Download
+[4]: /plugin/lombok
+[5]: /plugin/eclipse-support
+[6]: http://netbeans.org/kb/docs/java/annotations-lombok.html
 '''
 }

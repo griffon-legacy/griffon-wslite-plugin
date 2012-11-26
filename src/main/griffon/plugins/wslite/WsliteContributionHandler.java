@@ -24,7 +24,11 @@ import java.util.Map;
 /**
  * @author Andres Almiray
  */
-public interface WsliteProvider {
+public interface WsliteContributionHandler {
+    void setWsliteProvider(WsliteProvider provider);
+
+    WsliteProvider getWsliteProvider();
+
     Object withSoap(Map params, Closure closure);
 
     Object withHttp(Map params, Closure closure);
