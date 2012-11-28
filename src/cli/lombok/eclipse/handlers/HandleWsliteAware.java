@@ -19,6 +19,7 @@ package lombok.eclipse.handlers;
 import griffon.plugins.wslite.WsliteAware;
 import lombok.ListenerSupport;
 import lombok.core.AnnotationValues;
+import lombok.core.handlers.WsliteAwareConstants;
 import lombok.core.handlers.WsliteAwareHandler;
 import lombok.eclipse.EclipseAnnotationHandler;
 import lombok.eclipse.EclipseNode;
@@ -28,9 +29,6 @@ import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference;
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.TypeReference;
 
-import java.util.Arrays;
-
-import static lombok.ast.AST.Type;
 import static lombok.core.util.ErrorMessages.canBeUsedOnClassAndEnumOnly;
 import static lombok.eclipse.Eclipse.fromQualifiedName;
 import static lombok.eclipse.Eclipse.poss;
@@ -52,7 +50,7 @@ public class HandleWsliteAware extends EclipseAnnotationHandler<WsliteAware> {
             return;
         }
 
-        addInterface(EclipseWsliteAwareHandler.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.get(), source);
+        addInterface(WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.get(), source);
         handler.addWsliteProviderField(type);
         handler.addWsliteProviderAccessors(type);
         handler.addWsliteContributionMethods(type);

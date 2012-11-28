@@ -289,26 +289,45 @@ Follow these steps to setup Lombok in Eclipse
          griffon eclipse-update
 
  3. Open the project in Eclipse
- 4. Locate the `lombok-x.y.z.jar` in the project libraries. Right click on it, run it as a Java application. Select `lombok.core.Main` as the class to launch. Follow the instructions on the screen. Make a not of the install path as you'll need it in the next step. Shutdown Eclipse.
- 5. Go to the path where the lombok.jar was copied. Copy the following file from the project's working directory
+ 4. Locate the `lombok-x.y.z.jar` in the project libraries. Right click on it, run it as a Java application. Select
+ `lombok.core.Main` as the class to launch. Follow the on-screen instructions. Make a not of the install path as you'll
+ need it in the next step. Shutdown Eclipse.
+ 5. Go to the path where the `lombok.jar` was copied. This path is either found inside the Eclipse insatllatin directory or
+ in your local settings. Copy the following file from the project's working directory
 
          $ cp $USER_HOME/.griffon/<version>/projects/<project>/plugins/wslite-<version>/dist/griffon-wslite-compile-<version>.jar .
 
  6. Edit the launch script for Eclipse and tweak the boothclasspath entry so that includes the file you just copied
 
-         -Xbootclasspath/a:lombok.jar::griffon-wslite-compile-<version>.jar
+         -Xbootclasspath/a:lombok.jar:griffon-wslite-compile-<version>.jar
 
- 7. Launch Eclipse once more. Eclipse should be able to provide content assist for Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
+ 7. Launch Eclipse once more. Eclipse should be able to provide content assist for Java classes annotated with
+ `@griffon.plugins.wslite.WsliteAware`.
 
 #### NetBeans
 
-Follow the instructions found in [Annotation Processors Support in the NetBeans IDE, Part I: Using Project Lombok][6]. You may need to specify `lombok.core.AnnotationProcessor` in the list of Annotation Processors.
+Follow the instructions found in [Annotation Processors Support in the NetBeans IDE, Part I: Using Project Lombok][6].
+You may need to specify `lombok.core.AnnotationProcessor` in the list of Annotation Processors.
 
 NetBeans should be able to provide code suggestions on Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
 
 #### Intellij IDEA
 
- Lombok support is forthcoming.
+Follow these steps to setup Lombok in Intellij IDEA
+
+ 1. Download the latest stable release of [lombok-intellij-plugin][7] as a zip file.
+ 2. Open up the Preferences dialog in IntelliJ IDEA
+ 3. Go to the Plugins page. Click on the "Install plugin from disk..." button. Select the zip file you just downloaded.
+ 4. Shutdown IntelliJ IDEA; locate the directory where the lombok plugin was installed. This directory is usually found
+ somewhere inside your personal settings. In OSx for example it would be located in
+ `$USER_HOME/Library/Application Support/IntelliJIdea11/lombok-plugin`.
+ 5. Copy `griffon-wslite-compile-<version>.jar` to the `lib` directory
+
+         $ pwd
+           $USER_HOME/Library/Application Support/IntelliJIdea11/lombok-plugin
+         $ cp $USER_HOME/.griffon/<version>/projects/<project>/plugins/wslite-<version>/dist/griffon-wslite-compile-<version>.jar lib
+
+ 6. Launch IntelliJ IDEA ince more. Code completion should work now for Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
 
 [1]: https://github.com/jwagenleitner/groovy-wslite
 [2]: http://grails.org
@@ -316,5 +335,6 @@ NetBeans should be able to provide code suggestions on Java classes annotated wi
 [4]: /plugin/lombok
 [5]: /plugin/eclipse-support
 [6]: http://netbeans.org/kb/docs/java/annotations-lombok.html
+[7]: http://code.google.com/p/lombok-intellij-plugin
 '''
 }

@@ -26,33 +26,7 @@ import static lombok.ast.AST.*;
 /**
  * @author Andres Almiray
  */
-public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMethod<?, ?, ?, ?>, ?, ?, ?, ?, ?>> {
-    public static final String WSLITE_PROVIDER_TYPE = "griffon.plugins.wslite.WsliteProvider";
-    public static final String WSLITE_CLIENT_HOLDER_TYPE = "griffon.plugins.wslite.WsliteClientHolder";
-    public static final String WSLITE_CONTRIBUTION_HANDLER_TYPE = "griffon.plugins.wslite.WsliteContributionHandler";
-    private static final String WSLITE_PROVIDER_FIELD_NAME = "this$wsliteProvider";
-    private static final String METHOD_GET_WSLITE_PROVIDER = "getWsliteProvider";
-    private static final String METHOD_SET_WSLITE_PROVIDER = "setWsliteProvider";
-    private static final String METHOD_WITH_SOAP = "withSoap";
-    private static final String METHOD_WITH_REST = "withRest";
-    private static final String METHOD_WITH_HTTP = "withHttp";
-    private static final String PROVIDER = "provider";
-
-    private static final MethodDescriptor[] METHODS = new MethodDescriptor[]{
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_HTTP, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_HTTP, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}}),
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_REST, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_REST, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}}),
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_SOAP, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_SOAP, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}})
-    };
-
+public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMethod<?, ?, ?, ?>, ?, ?, ?, ?, ?>> implements WsliteAwareConstants {
     public void addWsliteProviderField(final TYPE_TYPE type) {
         type.editor().injectField(
             FieldDecl(Type(WSLITE_PROVIDER_TYPE), WSLITE_PROVIDER_FIELD_NAME)
@@ -102,20 +76,6 @@ public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMeth
                 );
             if (methodDesc.typeParameter != null) methodDecl.withTypeParameter(TypeParam(methodDesc.typeParameter));
             type.editor().injectMethod(methodDecl);
-        }
-    }
-
-    private static class MethodDescriptor {
-        private String methodName;
-        private String returnType;
-        private String typeParameter;
-        private String[][] arguments;
-
-        private MethodDescriptor(String returnType, String methodName, String typeParameter, String[][] arguments) {
-            this.returnType = returnType;
-            this.methodName = methodName;
-            this.typeParameter = typeParameter;
-            this.arguments = arguments;
         }
     }
 }

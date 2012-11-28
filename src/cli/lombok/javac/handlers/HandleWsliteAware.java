@@ -20,6 +20,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.ListBuffer;
 import griffon.plugins.wslite.WsliteAware;
 import lombok.core.AnnotationValues;
+import lombok.core.handlers.WsliteAwareConstants;
 import lombok.core.handlers.WsliteAwareHandler;
 import lombok.javac.JavacAnnotationHandler;
 import lombok.javac.JavacNode;
@@ -49,7 +50,7 @@ public class HandleWsliteAware extends JavacAnnotationHandler<WsliteAware> {
             return;
         }
 
-        addInterface(JavacWsliteAwareHandler.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.node());
+        addInterface(WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.node());
         handler.addWsliteProviderField(type);
         handler.addWsliteProviderAccessors(type);
         handler.addWsliteContributionMethods(type);

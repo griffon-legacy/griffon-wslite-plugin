@@ -20,6 +20,7 @@ import griffon.plugins.wslite.WsliteAware;
 import griffon.plugins.wslite.WsliteClientHolder;
 import griffon.plugins.wslite.WsliteContributionHandler;
 import griffon.plugins.wslite.WsliteProvider;
+import lombok.core.handlers.WsliteAwareConstants;
 import org.codehaus.groovy.ast.*;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
@@ -44,19 +45,13 @@ import static org.codehaus.griffon.ast.GriffonASTUtils.*;
  * @author Andres Almiray
  */
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
-public class WsliteAwareASTTransformation extends AbstractASTTransformation {
+public class WsliteAwareASTTransformation extends AbstractASTTransformation implements WsliteAwareConstants {
     private static final Logger LOG = LoggerFactory.getLogger(WsliteAwareASTTransformation.class);
-    private static final ClassNode WSLITE_CONTRIBUTION_HANDLER_TYPE = makeClassSafe(WsliteContributionHandler.class);
-    private static final ClassNode WSLITE_AWARE_TYPE = makeClassSafe(WsliteAware.class);
-    private static final ClassNode WSLITE_PROVIDER_TYPE = makeClassSafe(WsliteProvider.class);
-    private static final ClassNode WSLITE_CLIENT_HOLDER_TYPE = makeClassSafe(WsliteClientHolder.class);
+    private static final ClassNode WSLITE_CONTRIBUTION_HANDLER_CNODE = makeClassSafe(WsliteContributionHandler.class);
+    private static final ClassNode WSLITE_AWARE_CNODE = makeClassSafe(WsliteAware.class);
+    private static final ClassNode WSLITE_PROVIDER_CNODE = makeClassSafe(WsliteProvider.class);
+    private static final ClassNode WSLITE_CLIENT_HOLDER_CNODE = makeClassSafe(WsliteClientHolder.class);
 
-    private static final String PROVIDER = "provider";
-    private static final String METHOD_GET_WSLITE_PROVIDER = "getWsliteProvider";
-    private static final String METHOD_SET_WSLITE_PROVIDER = "setWsliteProvider";
-    private static final String METHOD_WITH_SOAP = "withSoap";
-    private static final String METHOD_WITH_REST = "withRest";
-    private static final String METHOD_WITH_HTTP = "withHttp";
     private static final String[] DELEGATING_METHODS = new String[]{
         METHOD_WITH_HTTP, METHOD_WITH_REST, METHOD_WITH_SOAP
     };
@@ -73,7 +68,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
      */
     public static boolean hasWsliteAwareAnnotation(AnnotatedNode node) {
         for (AnnotationNode annotation : node.getAnnotations()) {
-            if (WSLITE_AWARE_TYPE.equals(annotation.getClassNode())) {
+            if (WSLITE_AWARE_CNODE.equals(annotation.getClassNode())) {
                 return true;
             }
         }
@@ -130,14 +125,14 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
     }
 
     public static void apply(ClassNode declaringClass) {
-        injectInterface(declaringClass, WSLITE_CONTRIBUTION_HANDLER_TYPE);
+        injectInterface(declaringClass, WSLITE_CONTRIBUTION_HANDLER_CNODE);
 
         // add field:
         // protected WsliteProvider this$wsliteProvider = WsliteClientHolder.instance
         FieldNode providerField = declaringClass.addField(
-            "this$wsliteProvider",
+            WSLITE_PROVIDER_FIELD_NAME,
             ACC_PRIVATE | ACC_SYNTHETIC,
-            WSLITE_PROVIDER_TYPE,
+            WSLITE_PROVIDER_CNODE,
             defaultWsliteProviderInstance());
 
         // add method:
@@ -147,7 +142,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
         injectMethod(declaringClass, new MethodNode(
             METHOD_GET_WSLITE_PROVIDER,
             ACC_PUBLIC,
-            WSLITE_PROVIDER_TYPE,
+            WSLITE_PROVIDER_CNODE,
             Parameter.EMPTY_ARRAY,
             NO_EXCEPTIONS,
             returns(field(providerField))
@@ -162,7 +157,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
             ACC_PUBLIC,
             ClassHelper.VOID_TYPE,
             params(
-                param(WSLITE_PROVIDER_TYPE, PROVIDER)),
+                param(WSLITE_PROVIDER_CNODE, PROVIDER)),
             NO_EXCEPTIONS,
             block(
                 ifs_no_return(
@@ -173,7 +168,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
             )
         ));
 
-        for (MethodNode method : WSLITE_CONTRIBUTION_HANDLER_TYPE.getMethods()) {
+        for (MethodNode method : WSLITE_CONTRIBUTION_HANDLER_CNODE.getMethods()) {
             if (Arrays.binarySearch(DELEGATING_METHODS, method.getName()) < 0) continue;
             List<Expression> variables = new ArrayList<Expression>();
             Parameter[] parameters = new Parameter[method.getParameters().length];
@@ -204,6 +199,6 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation {
     }
 
     private static Expression defaultWsliteProviderInstance() {
-        return call(WSLITE_CLIENT_HOLDER_TYPE, "getInstance", NO_ARGS);
+        return call(WSLITE_CLIENT_HOLDER_CNODE, "getInstance", NO_ARGS);
     }
 }
