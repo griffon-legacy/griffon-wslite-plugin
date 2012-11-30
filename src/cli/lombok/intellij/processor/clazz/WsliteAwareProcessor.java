@@ -28,6 +28,7 @@ import de.plushnikov.intellij.lombok.util.PsiMethodUtil;
 import de.plushnikov.intellij.lombok.util.PsiPrimitiveTypeFactory;
 import griffon.plugins.wslite.WsliteAware;
 import lombok.core.handlers.WsliteAwareConstants;
+import lombok.core.util.MethodDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

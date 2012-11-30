@@ -35,27 +35,27 @@ public class WsliteContributionAdapter implements WsliteContributionHandler {
         return provider;
     }
 
-    public Object withSoap(Map params, Closure closure) {
-        return getWsliteProvider().withSoap(params, closure);
+    public <R> R withSoap(Map<String, Object> params, Closure<R> closure) {
+        return provider.withSoap(params, closure);
     }
 
-    public Object withHttp(Map params, Closure closure) {
-        return getWsliteProvider().withHttp(params, closure);
+    public <R> R withHttp(Map<String, Object> params, Closure<R> closure) {
+        return provider.withHttp(params, closure);
     }
 
-    public Object withRest(Map params, Closure closure) {
-        return getWsliteProvider().withRest(params, closure);
+    public <R> R withRest(Map<String, Object> params, Closure<R> closure) {
+        return provider.withRest(params, closure);
     }
 
-    public <T> T withSoap(Map params, CallableWithArgs<T> callable) {
-        return getWsliteProvider().withSoap(params, callable);
+    public <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable) {
+        return provider.withSoap(params, callable);
     }
 
-    public <T> T withHttp(Map params, CallableWithArgs<T> callable) {
-        return getWsliteProvider().withHttp(params, callable);
+    public <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable) {
+        return provider.withHttp(params, callable);
     }
 
-    public <T> T withRest(Map params, CallableWithArgs<T> callable) {
-        return getWsliteProvider().withRest(params, callable);
+    public <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable) {
+        return provider.withRest(params, callable);
     }
 }

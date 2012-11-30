@@ -25,15 +25,15 @@ import java.util.Map;
  * @author Andres Almiray
  */
 public interface WsliteProvider {
-    Object withSoap(Map params, Closure closure);
+    <R> R withSoap(Map<String, Object> params, Closure<R> closure);
 
-    Object withHttp(Map params, Closure closure);
+    <R> R withHttp(Map<String, Object> params, Closure<R> closure);
 
-    Object withRest(Map params, Closure closure);
+    <R> R withRest(Map<String, Object> params, Closure<R> closure);
 
-    <T> T withSoap(Map params, CallableWithArgs<T> callable);
+    <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable);
 
-    <T> T withHttp(Map params, CallableWithArgs<T> callable);
+    <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable);
 
-    <T> T withRest(Map params, CallableWithArgs<T> callable);
+    <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable);
 }

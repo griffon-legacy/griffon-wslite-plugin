@@ -16,10 +16,17 @@
 
 package lombok.core.handlers;
 
+import lombok.core.BaseConstants;
+import lombok.core.util.MethodDescriptor;
+
+import static lombok.core.util.MethodDescriptor.args;
+import static lombok.core.util.MethodDescriptor.type;
+import static lombok.core.util.MethodDescriptor.typeParams;
+
 /**
  * @author Andres Almiray
  */
-public interface WsliteAwareConstants {
+public interface WsliteAwareConstants extends BaseConstants {
     String WSLITE_PROVIDER_TYPE = "griffon.plugins.wslite.WsliteProvider";
     String WSLITE_CLIENT_HOLDER_TYPE = "griffon.plugins.wslite.WsliteClientHolder";
     String WSLITE_CONTRIBUTION_HANDLER_TYPE = "griffon.plugins.wslite.WsliteContributionHandler";
@@ -32,55 +39,53 @@ public interface WsliteAwareConstants {
     String PROVIDER = "provider";
 
     MethodDescriptor[] METHODS = new MethodDescriptor[]{
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_HTTP, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_HTTP, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}}),
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_REST, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_REST, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}}),
-        new MethodDescriptor("java.lang.Object", METHOD_WITH_SOAP, null, new String[][]{
-            {"java.util.Map"}, {"groovy.lang.Closure"}}),
-        new MethodDescriptor("T", METHOD_WITH_SOAP, "T", new String[][]{
-            {"java.util.Map"}, {"griffon.util.CallableWithArgs", "T"}})
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_HTTP,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GROOVY_LANG_CLOSURE, R))
+        ),
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_REST,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GROOVY_LANG_CLOSURE, R))
+        ),
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_SOAP,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GROOVY_LANG_CLOSURE, R))
+        ),
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_HTTP,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GRIFFON_UTIL_CALLABLEWITHARGS, R))
+        ),
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_REST,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GRIFFON_UTIL_CALLABLEWITHARGS, R))
+        ),
+        MethodDescriptor.method(
+            type(R),
+            typeParams(R),
+            METHOD_WITH_SOAP,
+            args(
+                type(JAVA_UTIL_MAP, JAVA_LANG_STRING, JAVA_LANG_OBJECT),
+                type(GRIFFON_UTIL_CALLABLEWITHARGS, R))
+        )
     };
-
-    class MethodDescriptor {
-        public String methodName;
-        public String returnType;
-        public String typeParameter;
-        public String[][] arguments;
-        public final String signature;
-
-        public MethodDescriptor(String returnType, String methodName, String typeParameter, String[][] arguments) {
-            this.returnType = returnType;
-            this.methodName = methodName;
-            this.typeParameter = typeParameter;
-            this.arguments = arguments;
-            this.signature = createMethodSignature();
-        }
-
-        private String createMethodSignature() {
-            StringBuilder b = new StringBuilder();
-            if (typeParameter != null) {
-                b.append("<").append(typeParameter).append("> ");
-            }
-            b.append(returnType)
-                .append(" ")
-                .append(methodName)
-                .append("(");
-            int argCounter = 0;
-            for (String[] arg : arguments) {
-                String argName = "arg" + argCounter++;
-                b.append(arg[0]);
-                if (arg.length == 2) {
-                    b.append("<").append(arg[1]).append(">");
-                }
-                b.append(" ").append(argName);
-                if (argCounter != arguments.length) b.append(", ");
-            }
-            return b.toString();
-        }
-    }
 }

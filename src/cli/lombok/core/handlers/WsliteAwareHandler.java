@@ -16,34 +16,33 @@
 
 package lombok.core.handlers;
 
-import lombok.ast.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.ast.Expression;
+import lombok.ast.IMethod;
+import lombok.ast.IType;
 
 import static lombok.ast.AST.*;
 
 /**
  * @author Andres Almiray
  */
-public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMethod<?, ?, ?, ?>, ?, ?, ?, ?, ?>> implements WsliteAwareConstants {
+public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMethod<?, ?, ?, ?>, ?, ?, ?, ?, ?>> extends AbstractHandler<TYPE_TYPE> implements WsliteAwareConstants {
+    private Expression<?> clientHolderInstance() {
+        return Call(Name(WSLITE_CLIENT_HOLDER_TYPE), "getInstance");
+    }
+
     public void addWsliteProviderField(final TYPE_TYPE type) {
-        type.editor().injectField(
-            FieldDecl(Type(WSLITE_PROVIDER_TYPE), WSLITE_PROVIDER_FIELD_NAME)
-                .makePrivate()
-                .withInitialization(Call(Name(WSLITE_CLIENT_HOLDER_TYPE), "getInstance"))
-        );
+        addField(type, WSLITE_PROVIDER_TYPE, WSLITE_PROVIDER_FIELD_NAME, clientHolderInstance());
     }
 
     public void addWsliteProviderAccessors(final TYPE_TYPE type) {
         type.editor().injectMethod(
-            MethodDecl(Type("void"), METHOD_SET_WSLITE_PROVIDER)
+            MethodDecl(Type(VOID), METHOD_SET_WSLITE_PROVIDER)
                 .makePublic()
                 .withArgument(Arg(Type(WSLITE_PROVIDER_TYPE), PROVIDER))
                 .withStatement(
                     If(Equal(Name(PROVIDER), Null()))
                         .Then(Block()
-                            .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), Call(Name(WSLITE_CLIENT_HOLDER_TYPE), "getInstance"))))
+                            .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), clientHolderInstance())))
                         .Else(Block()
                             .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), Name(PROVIDER)))))
         );
@@ -56,26 +55,6 @@ public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMeth
     }
 
     public void addWsliteContributionMethods(final TYPE_TYPE type) {
-        for (MethodDescriptor methodDesc : METHODS) {
-            List<Argument> methodArgs = new ArrayList<Argument>();
-            List<Expression<?>> callArgs = new ArrayList<Expression<?>>();
-            int argCounter = 0;
-            for (String[] arg : methodDesc.arguments) {
-                String argName = "arg" + argCounter++;
-                TypeRef argType = Type(arg[0]);
-                if (arg.length == 2) argType.withTypeArgument(Type(arg[1]));
-                methodArgs.add(Arg(argType, argName));
-                callArgs.add(Name(argName));
-            }
-            final MethodDecl methodDecl = MethodDecl(Type(methodDesc.returnType), methodDesc.methodName)
-                .makePublic()
-                .withArguments(methodArgs)
-                .withStatement(
-                    Return(Call(Field(WSLITE_PROVIDER_FIELD_NAME), methodDesc.methodName)
-                        .withArguments(callArgs))
-                );
-            if (methodDesc.typeParameter != null) methodDecl.withTypeParameter(TypeParam(methodDesc.typeParameter));
-            type.editor().injectMethod(methodDecl);
-        }
+        delegateMethodsTo(type, METHODS, Field(WSLITE_PROVIDER_FIELD_NAME));
     }
 }

@@ -17,7 +17,6 @@
 package lombok.eclipse.handlers;
 
 import griffon.plugins.wslite.WsliteAware;
-import lombok.ListenerSupport;
 import lombok.core.AnnotationValues;
 import lombok.core.handlers.WsliteAwareConstants;
 import lombok.core.handlers.WsliteAwareHandler;
@@ -25,16 +24,8 @@ import lombok.eclipse.EclipseAnnotationHandler;
 import lombok.eclipse.EclipseNode;
 import lombok.eclipse.handlers.ast.EclipseType;
 import org.eclipse.jdt.internal.compiler.ast.Annotation;
-import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference;
-import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
-import org.eclipse.jdt.internal.compiler.ast.TypeReference;
 
 import static lombok.core.util.ErrorMessages.canBeUsedOnClassAndEnumOnly;
-import static lombok.eclipse.Eclipse.fromQualifiedName;
-import static lombok.eclipse.Eclipse.poss;
-
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 
 /**
  * @author Andres Almiray
@@ -46,28 +37,15 @@ public class HandleWsliteAware extends EclipseAnnotationHandler<WsliteAware> {
     public void handle(AnnotationValues<WsliteAware> annotation, Annotation source, EclipseNode annotationNode) {
         EclipseType type = EclipseType.typeOf(annotationNode, source);
         if (type.isAnnotation() || type.isInterface()) {
-            annotationNode.addError(canBeUsedOnClassAndEnumOnly(ListenerSupport.class));
+            annotationNode.addError(canBeUsedOnClassAndEnumOnly(WsliteAware.class));
             return;
         }
 
-        addInterface(WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.get(), source);
+        EclipseUtil.addInterface(type.get(), WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE, source);
         handler.addWsliteProviderField(type);
         handler.addWsliteProviderAccessors(type);
         handler.addWsliteContributionMethods(type);
         type.editor().rebuild();
-    }
-
-    private void addInterface(String interfaceName, TypeDeclaration type, Annotation annotation) {
-        TypeReference[] interfaces = null;
-        if (type.superInterfaces != null) {
-            interfaces = new TypeReference[type.superInterfaces.length + 1];
-            System.arraycopy(type.superInterfaces, 0, interfaces, 0, type.superInterfaces.length);
-        } else {
-            interfaces = new TypeReference[1];
-        }
-        final char[][] typeNameTokens = fromQualifiedName(interfaceName);
-        interfaces[interfaces.length - 1] = new QualifiedTypeReference(typeNameTokens, poss(annotation, typeNameTokens.length));
-        type.superInterfaces = interfaces;
     }
 
     private static class EclipseWsliteAwareHandler extends WsliteAwareHandler<EclipseType> {

@@ -17,7 +17,6 @@
 package lombok.javac.handlers;
 
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.ListBuffer;
 import griffon.plugins.wslite.WsliteAware;
 import lombok.core.AnnotationValues;
 import lombok.core.handlers.WsliteAwareConstants;
@@ -27,18 +26,13 @@ import lombok.javac.JavacNode;
 import lombok.javac.handlers.ast.JavacType;
 
 import static lombok.core.util.ErrorMessages.canBeUsedOnClassAndEnumOnly;
-import static lombok.javac.handlers.JavacHandlerUtil.chainDotsString;
 import static lombok.javac.handlers.JavacHandlerUtil.deleteAnnotationIfNeccessary;
-
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
 
 /**
  * @author Andres Almiray
  */
 public class HandleWsliteAware extends JavacAnnotationHandler<WsliteAware> {
     private final JavacWsliteAwareHandler handler = new JavacWsliteAwareHandler();
-    // private static final Logger LOG = LoggerFactory.getLogger(HandleWsliteAware.class);
 
     @Override
     public void handle(final AnnotationValues<WsliteAware> annotation, final JCTree.JCAnnotation source, final JavacNode annotationNode) {
@@ -50,19 +44,11 @@ public class HandleWsliteAware extends JavacAnnotationHandler<WsliteAware> {
             return;
         }
 
-        addInterface(WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE, type.node());
+        JavacUtil.addInterface(type.node(), WsliteAwareConstants.WSLITE_CONTRIBUTION_HANDLER_TYPE);
         handler.addWsliteProviderField(type);
         handler.addWsliteProviderAccessors(type);
         handler.addWsliteContributionMethods(type);
         type.editor().rebuild();
-    }
-
-    public void addInterface(String interfaceName, JavacNode node) {
-        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) node.get();
-        final ListBuffer<JCTree.JCExpression> implementing = ListBuffer.lb();
-        implementing.appendList(classDecl.implementing);
-        implementing.append(chainDotsString(node, interfaceName));
-        classDecl.implementing = implementing.toList();
     }
 
     private static class JavacWsliteAwareHandler extends WsliteAwareHandler<JavacType> {

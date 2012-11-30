@@ -56,12 +56,12 @@ Usage
 
 The plugin will inject the following dynamic methods:
 
- * `withRest(Map params, Closure stmts)` - executes stmts using a RESTClient
- * `withHttp(Map params, Closure stmts)` - executes stmts using an HTTPClient
- * `withSoap(Map params, Closure stmts)` - executes stmts using a SOAPClient
- * `withRest(Map params, CallableWithArgs stmts)` - executes stmts using a RESTClient
- * `withHttp(Map params, CallableWithArgs stmts)` - executes stmts using an HTTPClient
- * `withSoap(Map params, CallableWithArgs stmts)` - executes stmts using a SOAPClient
+ * `<R> R withRest(Map<String, Object> params, Closure<R> stmts)` - executes stmts using a RESTClient
+ * `<R> R withHttp(Map<String, Object> params, Closure<R> stmts)` - executes stmts using an HTTPClient
+ * `<R> R withSoap(Map<String, Object> params, Closure<R> stmts)` - executes stmts using a SOAPClient
+ * `<R> R withRest(Map<String, Object> params, CallableWithArgs<R> stmts)` - executes stmts using a RESTClient
+ * `<R> R withHttp(Map<String, Object> params, CallableWithArgs<R> stmts)` - executes stmts using an HTTPClient
+ * `<R> R withSoap(Map<String, Object> params, CallableWithArgs<R> stmts)` - executes stmts using a SOAPClient
 
 The following properties will be set on the implicit HTTPClient when using either `withRest` or `withSoap`:
 
@@ -208,24 +208,24 @@ for this kind of tests. However you can use `WsliteEnhancer.enhance(metaClassIns
 `wsliteProviderInstance` is of type `griffon.plugins.wslite.WsliteProvider`. The contract for this interface looks like this
 
     public interface WsliteProvider {
-        Object withRest(Map params, Closure closure);
-        Object withHttp(Map params, Closure closure);
-        Object withSoap(Map params, Closure closure);
-        <T> T withRest(Map params, CallableWithArgs<T> callable);
-        <T> T withHttp(Map params, CallableWithArgs<T> callable);
-        <T> T withSoap(Map params, CallableWithArgs<T> callable);
+        <R> R withSoap(Map<String, Object> params, Closure<R> closure);
+        <R> R withHttp(Map<String, Object> params, Closure<R> closure);
+        <R> R withRest(Map<String, Object> params, Closure<R> closure);
+        <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable);
+        <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable);
+        <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable);
     }
 
 It's up to you define how these methods need to be implemented for your tests. For example, here's an implementation that never
 fails regardless of the arguments it receives
 
     class MyWsliteProvider implements WsliteProvider {
-        Object withRest(Map params, Closure closure) { null }
-        Object withHttp(Map params, Closure closure) { null }
-        Object withSoap(Map params, Closure closure) { null }
-        public <T> T withRest(Map params, CallableWithArgs<T> callable) { null }
-        public <T> T withHttp(Map params, CallableWithArgs<T> callable) { null }
-        public <T> T withSoap(Map params, CallableWithArgs<T> callable) { null }
+        public <R> R withSoap(Map<String, Object> params, Closure<R> closure) { null }
+        public <R> R withHttp(Map<String, Object> params, Closure<R> closure) { null }
+        public <R> R withRest(Map<String, Object> params, Closure<R> closure) { null }
+        public <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable) { null }
+        public <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable) { null }
+        public <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable) { null }
     }
     
 This implementation may be used in the following way
@@ -327,7 +327,7 @@ Follow these steps to setup Lombok in Intellij IDEA
            $USER_HOME/Library/Application Support/IntelliJIdea11/lombok-plugin
          $ cp $USER_HOME/.griffon/<version>/projects/<project>/plugins/wslite-<version>/dist/griffon-wslite-compile-<version>.jar lib
 
- 6. Launch IntelliJ IDEA ince more. Code completion should work now for Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
+ 6. Launch IntelliJ IDEA once more. Code completion should work now for Java classes annotated with `@griffon.plugins.wslite.WsliteAware`.
 
 [1]: https://github.com/jwagenleitner/groovy-wslite
 [2]: http://grails.org

@@ -23,7 +23,6 @@ import wslite.rest.RESTClient
 import wslite.soap.SOAPClient
 
 import griffon.util.CallableWithArgs
-
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -49,27 +48,27 @@ class WsliteClientHolder implements WsliteProvider {
 
     }
 
-    Object withSoap(Map params, Closure closure) {
+    public <R> R withSoap(Map<String, Object> params, Closure<R> closure) {
         return doWithClient(SOAP, SOAPClient, params, closure)
     }
 
-    Object withHttp(Map params, Closure closure) {
+    public <R> R withHttp(Map<String, Object> params, Closure<R> closure) {
         return doWithClient(HTTP, HTTPClient, params, closure)
     }
 
-    Object withRest(Map params, Closure closure) {
+    public <R> R withRest(Map<String, Object> params, Closure<R> closure) {
         return doWithClient(REST, RESTClient, params, closure)
     }
 
-    public <T> T withSoap(Map params, CallableWithArgs<T> callable) {
+    public <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable) {
         return doWithClient(SOAP, SOAPClient, params, callable)
     }
 
-    public <T> T withHttp(Map params, CallableWithArgs<T> callable) {
+    public <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable) {
         return doWithClient(HTTP, HTTPClient, params, callable)
     }
 
-    public <T> T withRest(Map params, CallableWithArgs<T> callable) {
+    public <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable) {
         return doWithClient(REST, RESTClient, params, callable)
     }
 
@@ -119,7 +118,7 @@ class WsliteClientHolder implements WsliteProvider {
 
     // ======================================================
 
-    private Object doWithClient(Map clientStore, Class klass, Map params, Closure closure) {
+    private <R> R doWithClient(Map clientStore, Class klass, Map<String, Object> params, Closure<R> closure) {
         def id = params.id
         def client = fetchClient(clientStore, klass, params)
 
@@ -132,7 +131,7 @@ class WsliteClientHolder implements WsliteProvider {
         return null
     }
 
-    private <T> T doWithClient(Map clientStore, Class klass, Map params, CallableWithArgs<T> callable) {
+    private <R> R doWithClient(Map clientStore, Class klass, Map<String, Object> params, CallableWithArgs<R> callable) {
         def id = params.id
         def client = fetchClient(clientStore, klass, params)
 
@@ -144,7 +143,7 @@ class WsliteClientHolder implements WsliteProvider {
         return null
     }
 
-    private fetchClient(Map clientStore, Class klass, Map params) {
+    private fetchClient(Map clientStore, Class klass, Map<String, Object> params) {
         def client = clientStore[(params.id).toString()]
         if (client == null) {
             String id = params.id ? params.remove('id').toString() : '<EMPTY>'
