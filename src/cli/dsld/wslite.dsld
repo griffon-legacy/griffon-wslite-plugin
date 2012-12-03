@@ -21,6 +21,6 @@ package dsld
  */
 
 contribute(enclosingClass(annotatedBy('griffon.plugins.wslite.WsliteAware'))) {
-	provider = "Wslite DSL"
-	delegatesTo "griffon.plugins.wslite.WsliteContributionHandler"
+    provider = "Wslite DSL"
+    delegatesTo "griffon.plugins.wslite.WsliteContributionHandler"
 }

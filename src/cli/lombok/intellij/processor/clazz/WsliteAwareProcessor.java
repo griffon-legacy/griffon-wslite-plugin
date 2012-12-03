@@ -16,11 +16,7 @@
 
 package lombok.intellij.processor.clazz;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import de.plushnikov.intellij.lombok.ErrorMessages;
-import de.plushnikov.intellij.lombok.problem.ProblemBuilder;
-import de.plushnikov.intellij.lombok.processor.clazz.AbstractLombokClassProcessor;
 import de.plushnikov.intellij.lombok.psi.LombokLightFieldBuilder;
 import de.plushnikov.intellij.lombok.psi.LombokLightMethodBuilder;
 import de.plushnikov.intellij.lombok.psi.LombokPsiElementFactory;
@@ -36,25 +32,11 @@ import java.util.List;
 /**
  * @author Andres Almiray
  */
-public class WsliteAwareProcessor extends AbstractLombokClassProcessor implements WsliteAwareConstants {
-    private static final String WSLITE_PROVIDER_FIELD_INITIALIZER = WSLITE_CLIENT_HOLDER_TYPE + ".getInstance()";
+public class WsliteAwareProcessor extends AbstractGriffonLombokClassProcessor implements WsliteAwareConstants {
+    private static final String WSLITE_PROVIDER_FIELD_INITIALIZER = DEFAULT_WSLITE_PROVIDER_TYPE + ".getInstance()";
 
     public WsliteAwareProcessor() {
         super(WsliteAware.class, PsiMethod.class);
-    }
-
-    @Override
-    protected boolean validate(@NotNull PsiAnnotation psiAnnotation, @NotNull PsiClass psiClass, @NotNull ProblemBuilder builder) {
-        return validateAnnotationOnRigthType(psiClass, builder);
-    }
-
-    protected boolean validateAnnotationOnRigthType(@NotNull PsiClass psiClass, @NotNull ProblemBuilder builder) {
-        boolean result = true;
-        if (psiClass.isAnnotationType() || psiClass.isInterface() || psiClass.isEnum()) {
-            builder.addError(ErrorMessages.canBeUsedOnClassOnly(WsliteAware.class));
-            result = false;
-        }
-        return result;
     }
 
     protected <Psi extends PsiElement> void processIntern(@NotNull PsiClass psiClass, @NotNull PsiAnnotation psiAnnotation, @NotNull List<Psi> target) {
@@ -72,25 +54,20 @@ public class WsliteAwareProcessor extends AbstractLombokClassProcessor implement
         LombokLightMethodBuilder method = LombokPsiElementFactory.getInstance().createLightMethod(psiClass.getManager(), METHOD_GET_WSLITE_PROVIDER)
             .withMethodReturnType(psiProviderType)
             .withContainingClass(psiClass)
+            .withModifier(PsiModifier.PUBLIC)
             .withNavigationElement(psiAnnotation);
-        method.withModifier(PsiModifier.PUBLIC);
         target.add((Psi) method);
 
         method = LombokPsiElementFactory.getInstance().createLightMethod(psiClass.getManager(), METHOD_SET_WSLITE_PROVIDER)
             .withMethodReturnType(PsiPrimitiveTypeFactory.getInstance().getVoidType())
             .withContainingClass(psiClass)
             .withParameter(PROVIDER, psiProviderType)
+            .withModifier(PsiModifier.PUBLIC)
             .withNavigationElement(psiAnnotation);
-        method.withModifier(PsiModifier.PUBLIC);
         target.add((Psi) method);
 
         for (MethodDescriptor methodDesc : METHODS) {
             target.add((Psi) PsiMethodUtil.createMethod(psiClass, methodDesc.signature, psiAnnotation));
         }
-    }
-
-    private PsiElementFactory psiElementFactory(PsiClass psiClass) {
-        Project project = psiClass.getProject();
-        return JavaPsiFacade.getElementFactory(project);
     }
 }

@@ -16,20 +16,16 @@
 
 package griffon.plugins.wslite
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import wslite.http.HTTPClient
 import wslite.rest.RESTClient
 import wslite.soap.SOAPClient
 
-import griffon.util.CallableWithArgs
 import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Andres Almiray
  */
-class WsliteClientHolder implements WsliteProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(WsliteClientHolder)
+class WsliteClientHolder {
     private static final WsliteClientHolder INSTANCE
 
     static {
@@ -47,32 +43,6 @@ class WsliteClientHolder implements WsliteProvider {
     private WsliteClientHolder() {
 
     }
-
-    public <R> R withSoap(Map<String, Object> params, Closure<R> closure) {
-        return doWithClient(SOAP, SOAPClient, params, closure)
-    }
-
-    public <R> R withHttp(Map<String, Object> params, Closure<R> closure) {
-        return doWithClient(HTTP, HTTPClient, params, closure)
-    }
-
-    public <R> R withRest(Map<String, Object> params, Closure<R> closure) {
-        return doWithClient(REST, RESTClient, params, closure)
-    }
-
-    public <R> R withSoap(Map<String, Object> params, CallableWithArgs<R> callable) {
-        return doWithClient(SOAP, SOAPClient, params, callable)
-    }
-
-    public <R> R withHttp(Map<String, Object> params, CallableWithArgs<R> callable) {
-        return doWithClient(HTTP, HTTPClient, params, callable)
-    }
-
-    public <R> R withRest(Map<String, Object> params, CallableWithArgs<R> callable) {
-        return doWithClient(REST, RESTClient, params, callable)
-    }
-
-    // ======================================================
 
     String[] getHttpClientIds() {
         List<String> ids = []
@@ -118,29 +88,16 @@ class WsliteClientHolder implements WsliteProvider {
 
     // ======================================================
 
-    private <R> R doWithClient(Map clientStore, Class klass, Map<String, Object> params, Closure<R> closure) {
-        def id = params.id
-        def client = fetchClient(clientStore, klass, params)
-
-        if (closure) {
-            closure.delegate = client
-            closure.resolveStrategy = Closure.DELEGATE_FIRST
-            if (LOG.debugEnabled) LOG.debug("Executing statements with ${klass.simpleName} '$client'${id ? '(' + id + ')' : ''}")
-            return closure()
-        }
-        return null
+    HTTPClient fetchHttpClient(Map<String, Object> params) {
+        (HTTPClient) fetchClient(HTTP, HTTPClient, params)
     }
 
-    private <R> R doWithClient(Map clientStore, Class klass, Map<String, Object> params, CallableWithArgs<R> callable) {
-        def id = params.id
-        def client = fetchClient(clientStore, klass, params)
+    RESTClient fetchRestClient(Map<String, Object> params) {
+        (RESTClient) fetchClient(REST, RESTClient, params)
+    }
 
-        if (callable) {
-            callable.args = [client] as Object[]
-            if (LOG.debugEnabled) LOG.debug("Executing statements with ${klass.simpleName} '$client'${id ? '(' + id + ')' : ''}")
-            return callable.call()
-        }
-        return null
+    SOAPClient fetchSoapClient(Map<String, Object> params) {
+        (SOAPClient) fetchClient(SOAP, SOAPClient, params)
     }
 
     private fetchClient(Map clientStore, Class klass, Map<String, Object> params) {

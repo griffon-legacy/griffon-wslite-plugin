@@ -28,7 +28,7 @@ final class WsliteEnhancer {
 
     private WsliteEnhancer() {}
     
-    static void enhance(MetaClass mc, WsliteProvider provider = WsliteClientHolder.instance) {
+    static void enhance(MetaClass mc, WsliteProvider provider = DefaultWsliteProvider.instance) {
         if(LOG.debugEnabled) LOG.debug("Enhancing $mc with $provider")
         mc.withRest = {Map params, Closure closure ->
             provider.withRest(params, closure)

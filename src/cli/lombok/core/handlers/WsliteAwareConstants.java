@@ -28,7 +28,7 @@ import static lombok.core.util.MethodDescriptor.typeParams;
  */
 public interface WsliteAwareConstants extends BaseConstants {
     String WSLITE_PROVIDER_TYPE = "griffon.plugins.wslite.WsliteProvider";
-    String WSLITE_CLIENT_HOLDER_TYPE = "griffon.plugins.wslite.WsliteClientHolder";
+    String DEFAULT_WSLITE_PROVIDER_TYPE = "griffon.plugins.wslite.DefaultWsliteProvider";
     String WSLITE_CONTRIBUTION_HANDLER_TYPE = "griffon.plugins.wslite.WsliteContributionHandler";
     String WSLITE_PROVIDER_FIELD_NAME = "this$wsliteProvider";
     String METHOD_GET_WSLITE_PROVIDER = "getWsliteProvider";

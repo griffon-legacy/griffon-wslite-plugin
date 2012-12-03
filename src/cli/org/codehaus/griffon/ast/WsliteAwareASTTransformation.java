@@ -16,13 +16,12 @@
 
 package org.codehaus.griffon.ast;
 
+import griffon.plugins.wslite.DefaultWsliteProvider;
 import griffon.plugins.wslite.WsliteAware;
-import griffon.plugins.wslite.WsliteClientHolder;
 import griffon.plugins.wslite.WsliteContributionHandler;
 import griffon.plugins.wslite.WsliteProvider;
 import lombok.core.handlers.WsliteAwareConstants;
 import org.codehaus.groovy.ast.*;
-import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.control.CompilePhase;
@@ -50,7 +49,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation impl
     private static final ClassNode WSLITE_CONTRIBUTION_HANDLER_CNODE = makeClassSafe(WsliteContributionHandler.class);
     private static final ClassNode WSLITE_AWARE_CNODE = makeClassSafe(WsliteAware.class);
     private static final ClassNode WSLITE_PROVIDER_CNODE = makeClassSafe(WsliteProvider.class);
-    private static final ClassNode WSLITE_CLIENT_HOLDER_CNODE = makeClassSafe(WsliteClientHolder.class);
+    private static final ClassNode DEFAULT_WSLITE_PROVIDER_CNODE = makeClassSafe(DefaultWsliteProvider.class);
 
     private static final String[] DELEGATING_METHODS = new String[]{
         METHOD_WITH_HTTP, METHOD_WITH_REST, METHOD_WITH_SOAP
@@ -128,7 +127,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation impl
         injectInterface(declaringClass, WSLITE_CONTRIBUTION_HANDLER_CNODE);
 
         // add field:
-        // protected WsliteProvider this$wsliteProvider = WsliteClientHolder.instance
+        // protected WsliteProvider this$wsliteProvider = DefaultWsliteProvider.instance
         FieldNode providerField = declaringClass.addField(
             WSLITE_PROVIDER_FIELD_NAME,
             ACC_PRIVATE | ACC_SYNTHETIC,
@@ -191,7 +190,7 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation impl
                 returns(call(
                     field(providerField),
                     method.getName(),
-                    new ArgumentListExpression(variables)))
+                    args(variables)))
             );
             newMethod.setGenericsTypes(method.getGenericsTypes());
             injectMethod(declaringClass, newMethod);
@@ -199,6 +198,6 @@ public class WsliteAwareASTTransformation extends AbstractASTTransformation impl
     }
 
     private static Expression defaultWsliteProviderInstance() {
-        return call(WSLITE_CLIENT_HOLDER_CNODE, "getInstance", NO_ARGS);
+        return call(DEFAULT_WSLITE_PROVIDER_CNODE, "getInstance", NO_ARGS);
     }
 }

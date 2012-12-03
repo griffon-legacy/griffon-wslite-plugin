@@ -23,4 +23,3 @@ package gdsl
 contributor(scope: annotatedScope(ctype: 'griffon.plugins.wslite.WsliteAware')) {
     delegatesTo(findClass('griffon.plugins.wslite.WsliteContributionHandler'))
 }
-

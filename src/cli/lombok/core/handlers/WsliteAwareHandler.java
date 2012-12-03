@@ -26,12 +26,12 @@ import static lombok.ast.AST.*;
  * @author Andres Almiray
  */
 public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMethod<?, ?, ?, ?>, ?, ?, ?, ?, ?>> extends AbstractHandler<TYPE_TYPE> implements WsliteAwareConstants {
-    private Expression<?> clientHolderInstance() {
-        return Call(Name(WSLITE_CLIENT_HOLDER_TYPE), "getInstance");
+    private Expression<?> defaultWsliteProviderInstance() {
+        return Call(Name(DEFAULT_WSLITE_PROVIDER_TYPE), "getInstance");
     }
 
     public void addWsliteProviderField(final TYPE_TYPE type) {
-        addField(type, WSLITE_PROVIDER_TYPE, WSLITE_PROVIDER_FIELD_NAME, clientHolderInstance());
+        addField(type, WSLITE_PROVIDER_TYPE, WSLITE_PROVIDER_FIELD_NAME, defaultWsliteProviderInstance());
     }
 
     public void addWsliteProviderAccessors(final TYPE_TYPE type) {
@@ -42,7 +42,7 @@ public abstract class WsliteAwareHandler<TYPE_TYPE extends IType<? extends IMeth
                 .withStatement(
                     If(Equal(Name(PROVIDER), Null()))
                         .Then(Block()
-                            .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), clientHolderInstance())))
+                            .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), defaultWsliteProviderInstance())))
                         .Else(Block()
                             .withStatement(Assign(Field(WSLITE_PROVIDER_FIELD_NAME), Name(PROVIDER)))))
         );

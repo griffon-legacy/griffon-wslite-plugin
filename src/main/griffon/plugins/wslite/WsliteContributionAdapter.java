@@ -25,10 +25,10 @@ import java.util.Map;
  * @author Andres Almiray
  */
 public class WsliteContributionAdapter implements WsliteContributionHandler {
-    private WsliteProvider provider = WsliteClientHolder.getInstance();
+    private WsliteProvider provider = DefaultWsliteProvider.getInstance();
 
     public void setWsliteProvider(WsliteProvider provider) {
-        this.provider = provider != null ? provider : WsliteClientHolder.getInstance();
+        this.provider = provider != null ? provider : DefaultWsliteProvider.getInstance();
     }
 
     public WsliteProvider getWsliteProvider() {
