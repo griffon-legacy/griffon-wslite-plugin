@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2012-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
@@ -365,7 +365,7 @@ Follow the steps found in the [Lombok][4] plugin for setting up Eclipse up to
 number 5.
 
  6. Go to the path where the `lombok.jar` was copied. This path is either found
-    inside the Eclipse insatllation directory or in your local settings. Copy
+    inside the Eclipse installation directory or in your local settings. Copy
     the following file from the project's working directory
 
          $ cp $USER_HOME/.griffon/<version>/projects/<project>/plugins/wslite-<version>/dist/griffon-wslite-compile-<version>.jar .
@@ -374,7 +374,7 @@ number 5.
     that includes the file you just copied
 
         -Xbootclasspath/a:lombok.jar:lombok-pg-<version>.jar:\
-        griffon-lombok-compile-<version>.jargriffon-wslite-compile-<version>.jar
+        griffon-lombok-compile-<version>.jar:griffon-wslite-compile-<version>.jar
 
  7. Launch Eclipse once more. Eclipse should be able to provide content assist
     for Java classes annotated with `@WsliteAware`.
@@ -382,7 +382,7 @@ number 5.
 #### NetBeans
 
 Follow the instructions found in [Annotation Processors Support in the NetBeans
-IDE, Part I: Using Project Lombok][6]. You may need to specify
+IDE, Part I: Using Project Lombok][5]. You may need to specify
 `lombok.core.AnnotationProcessor` in the list of Annotation Processors.
 
 NetBeans should be able to provide code suggestions on Java classes annotated
@@ -407,8 +407,6 @@ up to number 5.
 [2]: http://grails.org
 [3]: http://grails.org/Download
 [4]: /plugin/lombok
-[5]: /plugin/eclipse-support
-[6]: http://netbeans.org/kb/docs/java/annotations-lombok.html
-[7]: http://code.google.com/p/lombok-intellij-plugin
+[5]: http://netbeans.org/kb/docs/java/annotations-lombok.html
 '''
 }
