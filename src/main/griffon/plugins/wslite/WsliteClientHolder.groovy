@@ -36,13 +36,11 @@ class WsliteClientHolder {
         INSTANCE
     }
 
+    private WsliteClientHolder() {}
+
     private final Map<String, HTTPClient> HTTP = new ConcurrentHashMap<String, HTTPClient>()
     private final Map<String, RESTClient> REST = new ConcurrentHashMap<String, RESTClient>()
     private final Map<String, SOAPClient> SOAP = new ConcurrentHashMap<String, SOAPClient>()
-
-    private WsliteClientHolder() {
-
-    }
 
     String[] getHttpClientIds() {
         List<String> ids = []

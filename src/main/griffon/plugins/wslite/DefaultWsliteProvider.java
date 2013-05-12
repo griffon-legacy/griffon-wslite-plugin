@@ -36,6 +36,8 @@ public class DefaultWsliteProvider extends AbstractWsliteProvider {
         return INSTANCE;
     }
 
+    private DefaultWsliteProvider() {}
+
     @Override
     protected HTTPClient getHttpClient(Map<String, Object> params) {
         return WsliteClientHolder.getInstance().fetchHttpClient(params);
